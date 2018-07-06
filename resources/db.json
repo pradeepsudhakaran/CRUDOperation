@@ -1,0 +1,7 @@
+{
+  "db.connectionUrl" : "localhost",
+  "db.connectionPort" : 27017,
+  "db.database" : "testDB",
+  "db.user" : "test",
+  "db.pwd" : "password",
+}
