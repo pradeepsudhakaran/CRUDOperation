@@ -1,8 +1,11 @@
 package com.auth.builder;
 
+import com.auth.handler.EmployeeHandler;
+
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
 public class RouteBuilder {
 	private static final Logger logger = LoggerFactory.getLogger(RouteBuilder.class);
@@ -30,6 +33,11 @@ public class RouteBuilder {
 	  }
 
 	  public static void addRequestRouteHandlers(Router router) {
-		  
+		  router.route("/employee*").consumes("application/x-www-form-urlencoded")
+	        .produces("application/json")
+	        .handler(BodyHandler.create().setDeleteUploadedFilesOnEnd(true));
+		  router.post("/employee/create").consumes("application/x-www-form-urlencoded")
+	        .produces("application/json")
+	        .handler(EmployeeHandler::addEmployee);
 	  }
 }

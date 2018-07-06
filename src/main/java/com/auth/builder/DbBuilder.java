@@ -31,8 +31,8 @@ public class DbBuilder {
 		return mongoClient;
 	}
 	
-	public static MongoDatabase getDB() {
-		MongoDatabase database = DbBuilder.initializeDb().getDatabase(dataBaseName);
+	public static MongoDatabase getDB(MongoClient mongoClient) {
+		MongoDatabase database = mongoClient.getDatabase(dataBaseName);
 		return database;
 	}
 	
