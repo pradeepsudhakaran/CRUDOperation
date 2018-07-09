@@ -1,6 +1,7 @@
 package com.auth.builder;
 
 import com.auth.handler.EmployeeHandler;
+import com.auth.handler.LoginHandler;
 
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -33,11 +34,33 @@ public class RouteBuilder {
 	  }
 
 	  public static void addRequestRouteHandlers(Router router) {
+		  addEmployeeRoutes(router);
+		  addAuthRoutes(router);
+	  }
+	 
+	  public static void addAuthRoutes(Router router) {
+		  router.route("/userauth*").consumes("application/x-www-form-urlencoded")
+	        .produces("application/json")
+	        .handler(BodyHandler.create().setDeleteUploadedFilesOnEnd(true));
+		  router.get("/userauth").consumes("application/x-www-form-urlencoded")
+	        .produces("application/json")
+	        .handler(LoginHandler::userAuth);
+	  }
+	  
+	  public static void addEmployeeRoutes(Router router) {
+		  router.get("/employee/list").produces("application/json")
+		    .handler(EmployeeHandler::getEmployees);
+		  router.delete("/employee/:_id").consumes("application/x-www-form-urlencoded")
+	        .produces("application/json")
+	        .handler(EmployeeHandler::deleteEmployee);
 		  router.route("/employee*").consumes("application/x-www-form-urlencoded")
 	        .produces("application/json")
 	        .handler(BodyHandler.create().setDeleteUploadedFilesOnEnd(true));
 		  router.post("/employee/create").consumes("application/x-www-form-urlencoded")
 	        .produces("application/json")
 	        .handler(EmployeeHandler::addEmployee);
+		  router.put("/employee/:_id").consumes("application/x-www-form-urlencoded")
+	        .produces("application/json")
+	        .handler(EmployeeHandler::updateEmployee);
 	  }
 }

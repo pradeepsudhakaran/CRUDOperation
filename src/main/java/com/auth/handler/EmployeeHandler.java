@@ -10,6 +10,7 @@ import com.auth.utils.ResponseUtil;
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -29,10 +30,12 @@ public class EmployeeHandler {
         	logger.error("required params missing");
         	ResponseUtil.writeErrorObject(400, "Required params missing",
         			"Required params missing", response);
+        	return;
         } else if (StringUtils.isEmpty(address)) {
         	logger.error("required params missing");
         	ResponseUtil.writeErrorObject(400, "Required params missing",
         			"Required params missing", response);
+        	return;
         }
         
         EmployeeBO employeeBO = new EmployeeBOImpl();
@@ -47,5 +50,58 @@ public class EmployeeHandler {
         	logger.error("Problem with server. Employee insert count 0");
         	ResponseBuilder.writeInternalServerError(response);
         }
+    }
+    
+    public static void getEmployees(RoutingContext routingContext) {
+    	HttpServerRequest request = routingContext.request();
+        HttpServerResponse response = routingContext.response();
+        MultiMap params = request.params();
+        
+        EmployeeBO employeeBO = new EmployeeBOImpl();
+        JsonArray resultArray = employeeBO.getEmployees();
+        logger.info("Total Count :: "+resultArray.size());
+        ResponseUtil.writeSuccessObject(200, resultArray, response);
+    }
+    
+    public static void updateEmployee(RoutingContext routingContext) {
+    	HttpServerRequest request = routingContext.request();
+        HttpServerResponse response = routingContext.response();
+        MultiMap params = request.params();
+        
+        long employeeId = (StringUtils.isEmpty(params.get("_id"))) ? Long.valueOf(params.get("_id")) : 0;
+        if (employeeId == 0) {
+        	logger.error("required params missing");
+        	ResponseUtil.writeErrorObject(400, "Required params missing",
+        			"Required params missing", response);
+        	return;
+        }
+        
+        EmployeeBO employeeBO = new EmployeeBOImpl();
+        int count = employeeBO.updateEmployee(params);
+        logger.info("Update Count :: "+count);
+        JsonObject responseObject = new JsonObject();
+    	responseObject.put("message", "Employee Updated");
+        ResponseUtil.writeSuccessObject(200, responseObject, response);
+    }
+    
+    public static void deleteEmployee(RoutingContext routingContext) {
+    	HttpServerRequest request = routingContext.request();
+        HttpServerResponse response = routingContext.response();
+        MultiMap params = request.params();
+        
+        long employeeId = (StringUtils.isEmpty(params.get("_id"))) ? Long.valueOf(params.get("_id")) : 0;
+        if (employeeId == 0) {
+        	logger.error("required params missing");
+        	ResponseUtil.writeErrorObject(400, "Required params missing",
+        			"Required params missing", response);
+        	return;
+        }
+        
+        EmployeeBO employeeBO = new EmployeeBOImpl();
+        int count = employeeBO.updateEmployee(params);
+        logger.info("Delete Count :: "+count);
+        JsonObject responseObject = new JsonObject();
+    	responseObject.put("message", "Employee Deleted");
+        ResponseUtil.writeSuccessObject(200, responseObject, response);
     }
 } 
